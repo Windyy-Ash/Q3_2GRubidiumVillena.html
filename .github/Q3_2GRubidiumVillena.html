@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club/Organization Application</title>
+    <style>
+        /* Simple CSS styles */
+        form {
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        fieldset {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid #4CAF50;
+            background-color: #e8f5e9;
+        }
+        .error {
+            border: 2px solid red;
+        }
+    </style>
+    <script>
+        // Confirmation on submit/reset
+        function confirmAction(event, message) {
+            if (!confirm(message)) {
+                event.preventDefault();
+            }
+        }
+
+        // Mark empty fields on blur
+        function validateField(event) {
+            if (!event.target.value.trim()) {
+                event.target.classList.add('error');
+            } else {
+                event.target.classList.remove('error');
+            }
+        }
+    </script>
+</head>
+<body>
+    <form method="post" action="submit" onsubmit="confirmAction(event, 'Are you sure you want to submit?')" onreset="confirmAction(event, 'Are you sure you want to reset?')">
+        <fieldset>
+            <legend>Personal Information</legend>
+            <label>
+                Student ID:
+                <input type="number" name="studentID" required onblur="validateField(event)">
+            </label>
+            <label>
+                Full Name:
+                <input type="text" name="fullName" required onblur="validateField(event)">
+            </label>
+            <label>
+                Birthday:
+                <input type="date" name="birthday" required onblur="validateField(event)">
+            </label>
+            <label>
+                Email Address:
+                <input type="email" name="email" required onblur="validateField(event)">
+            </label>
+        </fieldset>
+        <fieldset>
+            <legend>Contact and Preferences</legend>
+            <label>
+                Mobile Phone:
+                <input type="text" name="mobilePhone" required onblur="validateField(event)">
+            </label>
+            <label>
+                Grade Level:
+                <select name="gradeLevel" required>
+                    <option value="">Select Grade Level</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+            </label>
+            <label>
+                Intern/Extern:
+                <input type="radio" name="role" value="intern" required> Intern
+                <input type="radio" name="role" value="extern" required> Extern
+            </label>
+            <label>
+                Preferred Organization/Club:
+                <select name="preferredClub" required>
+                    <option value="">Select Club</option>
+                    <option value="science">Science Club</option>
+                    <option value="math">Math Club</option>
+                    <option value="arts">Arts Club</option>
+                    <option value="sports">Sports Club</option>
+                    <option value="music">Music Club</option>
+                </select>
+            </label>
+            <label>
+                Why do you want to join:
+                <textarea name="reason" required onblur="validateField(event)"></textarea>
+            </label>
+        </fieldset>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+    </form>
+</body>
+</html>
