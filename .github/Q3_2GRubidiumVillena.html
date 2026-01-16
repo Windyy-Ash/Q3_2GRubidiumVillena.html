@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club/Organization Application</title>
     <style>
-        /* Simple CSS styles */
+  
         form {
             width: 50%;
             margin: auto;
@@ -32,14 +32,12 @@
         }
     </style>
     <script>
-        // Confirmation on submit/reset
+
         function confirmAction(event, message) {
             if (!confirm(message)) {
                 event.preventDefault();
             }
         }
-
-        // Mark empty fields on blur
         function validateField(event) {
             if (!event.target.value.trim()) {
                 event.target.classList.add('error');
