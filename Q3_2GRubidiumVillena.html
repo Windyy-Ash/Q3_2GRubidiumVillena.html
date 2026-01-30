@@ -3,110 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Club/Organization Application</title>
+    <title>View Club Sign-ups</title>
     <style>
-  
-        form {
-            width: 50%;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fb;
+            color: #101629;
         }
-        fieldset {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ccc;
+        .shell {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+        .panel {
+            background: #fff;
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+            border: 1px solid #e3e8ff;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 2.2rem;
+        }
+        .subtitle {
+            margin: 4px 0 24px;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        .nav-link {
+            display: inline-block;
+            margin-bottom: 16px;
+            color: #4338ca;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 12px;
         }
         label {
-            display: block;
-            margin-bottom: 10px;
+            font-weight: 600;
         }
-        input:focus, select:focus, textarea:focus {
-            outline: 2px solid #4CAF50;
-            background-color: #e8f5e9;
+        select {
+            min-width: 240px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #c7d2fe;
+            font-size: 1rem;
         }
-        .error {
-            border: 2px solid red;
+        select:focus {
+            outline: none;
+            border-color: #4338ca;
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.2);
+        }
+        .summary {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 8px 0 16px;
+        }
+        .status-note {
+            margin: 0 0 16px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #d8ddf3;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 720px;
+        }
+        thead {
+            background: #0f172a;
+            color: #fff;
+        }
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tbody tr:nth-child(odd) {
+            background: #f8fafc;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .panel {
+                padding: 24px;
+            }
+            select {
+                width: 100%;
+            }
+            table {
+                min-width: 640px;
+            }
         }
     </style>
-    <script>
-
-        function confirmAction(event, message) {
-            if (!confirm(message)) {
-                event.preventDefault();
-            }
-        }
-        function validateField(event) {
-            if (!event.target.value.trim()) {
-                event.target.classList.add('error');
-            } else {
-                event.target.classList.remove('error');
-            }
-        }
-    </script>
 </head>
 <body>
-    <form method="post" action="submit" onsubmit="confirmAction(event, 'Are you sure you want to submit?')" onreset="confirmAction(event, 'Are you sure you want to reset?')">
-        <fieldset>
-            <legend>Personal Information</legend>
-            <label>
-                Student ID:
-                <input type="number" name="studentID" required onblur="validateField(event)">
-            </label>
-            <label>
-                Full Name:
-                <input type="text" name="fullName" required onblur="validateField(event)">
-            </label>
-            <label>
-                Birthday:
-                <input type="date" name="birthday" required onblur="validateField(event)">
-            </label>
-            <label>
-                Email Address:
-                <input type="email" name="email" required onblur="validateField(event)">
-            </label>
-        </fieldset>
-        <fieldset>
-            <legend>Contact and Preferences</legend>
-            <label>
-                Mobile Phone:
-                <input type="text" name="mobilePhone" required onblur="validateField(event)">
-            </label>
-            <label>
-                Grade Level:
-                <select name="gradeLevel" required>
-                    <option value="">Select Grade Level</option>
-                    <option value="9">Grade 9</option>
-                    <option value="10">Grade 10</option>
-                    <option value="11">Grade 11</option>
-                    <option value="12">Grade 12</option>
+<div class="shell">
+    <section class="panel">
+            <h1>Show List of Students Who Signed-Up</h1>
+            <p class="subtitle">by AL Mendoza</p>
+            <a class="nav-link" href="index.html">&#8592; Back to Sign-up</a>
+
+            <div class="controls">
+                <label for="clubFilter">Select Your Club</label>
+                <select id="clubFilter" aria-label="Filter sign-ups by club">
+                    <option value="">-- select an option --</option>
                 </select>
-            </label>
-            <label>
-                Intern/Extern:
-                <input type="radio" name="role" value="intern" required> Intern
-                <input type="radio" name="role" value="extern" required> Extern
-            </label>
-            <label>
-                Preferred Organization/Club:
-                <select name="preferredClub" required>
-                    <option value="">Select Club</option>
-                    <option value="science">Science Club</option>
-                    <option value="math">Math Club</option>
-                    <option value="arts">Arts Club</option>
-                    <option value="sports">Sports Club</option>
-                    <option value="music">Music Club</option>
-                </select>
-            </label>
-            <label>
-                Why do you want to join:
-                <textarea name="reason" required onblur="validateField(event)"></textarea>
-            </label>
-        </fieldset>
-        <button type="submit">Submit</button>
-        <button type="reset">Reset</button>
-    </form>
+            </div>
+
+            <p class="summary">Total Sign-up: <span id="totalCount">0</span></p>
+            <p id="statusText" class="status-note">Loading saved sign-ups...</p>
+
+            <div class="table-wrapper hidden" id="tableWrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Club</th>
+                            <th>ID</th>
+                            <th>Fullname</th>
+                            <th>Grade</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Intern | Extern</th>
+                        </tr>
+                    </thead>
+                    <tbody id="signupTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Sharing the same key as the form page keeps both views in sync without extra plumbing
+        const STORAGE_KEY = 'clubSignups';
+        const CLUBS = [
+            'Science Club',
+            'Math Club',
+            'Arts Club',
+            'Sports Club',
+            'Music Club'
+        ];
+
+        function loadSignups() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (error) {
+                console.error('Unable to load sign-ups', error);
+                return [];
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const filter = document.getElementById('clubFilter');
+            const totalCount = document.getElementById('totalCount');
+            const tableBody = document.getElementById('signupTableBody');
+            const statusText = document.getElementById('statusText');
+            const tableWrapper = document.getElementById('tableWrapper');
+            const signups = loadSignups();
+
+            populateFilter(filter);
+            filter.value = 'all';
+
+            // The render is called whenever the filter changes so that table + total stay consistent
+            function render(filteredList) {
+                totalCount.textContent = filteredList.length;
+
+                if (filteredList.length === 0) {
+                    tableWrapper.classList.add('hidden');
+                    statusText.textContent = signups.length === 0
+                        ? 'No sign-ups have been saved yet. Encourage students to submit the form!'
+                        : buildEmptyMessage(filter.value);
+                    return;
+                }
+
+                tableWrapper.classList.remove('hidden');
+                statusText.textContent = '';
+                tableBody.innerHTML = '';
+
+                filteredList.forEach((entry) => {
+                    const row = document.createElement('tr');
+                    const cells = [
+                        entry.preferredClub,
+                        entry.id,
+                        entry.fullName,
+                        entry.gradeLabel,
+                        entry.email,
+                        entry.mobile,
+                        entry.role
+                    ];
+
+                    cells.forEach((value) => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+
+                    tableBody.appendChild(row);
+                });
+            }
+
+            function buildEmptyMessage(selectedValue) {
+                if (selectedValue === 'all' || selectedValue === '') {
+                    return 'There are currently no stored sign-ups to show.';
+                }
+                return `No sign-ups for ${selectedValue}.`;
+            }
+
+            function getFilteredList(value) {
+                if (value === 'all' || value === '') {
+                    return signups;
+                }
+                return signups.filter((entry) => entry.preferredClub === value);
+            }
+
+            render(getFilteredList(filter.value));
+
+            filter.addEventListener('change', () => {
+                // It only filters when the dropdown changes.
+                const filtered = getFilteredList(filter.value);
+                render(filtered);
+            });
+        });
+
+        function populateFilter(selectEl) {
+            const frag = document.createDocumentFragment();
+            const allOption = document.createElement('option');
+            allOption.value = 'all';
+            allOption.textContent = 'All Clubs';
+            frag.appendChild(allOption);
+
+            CLUBS.forEach((club) => {
+                const option = document.createElement('option');
+                option.value = club;
+                option.textContent = club;
+                frag.appendChild(option);
+            });
+
+            selectEl.appendChild(frag);
+        }
+    </script>
 </body>
 </html>

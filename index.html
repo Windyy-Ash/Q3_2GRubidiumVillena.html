@@ -5,39 +5,139 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club/Organization Application</title>
     <style>
-  
+        :root {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #122335;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f3f7ff, #dfe9ff);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+        }
         form {
-            width: 50%;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
+            width: 100%;
+            max-width: 720px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 20px 40px rgba(18, 35, 53, 0.15);
+            padding: 32px;
+            border: 1px solid #d7e1f3;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 2rem;
         }
         fieldset {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #d7e1f3;
+        }
+        legend {
+            font-weight: 600;
+            padding: 0 8px;
         }
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
-        input:focus, select:focus, textarea:focus {
-            outline: 2px solid #4CAF50;
-            background-color: #e8f5e9;
+        .form-control {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #b8c6e3;
+            font-size: 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+        .radio-group input {
+            width: auto;
+        }
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+        }
+        button.primary {
+            background: #4f46e5;
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+        button.secondary {
+            background: #fff;
+            color: #4f46e5;
+            border: 1px solid #c7cff7;
+        }
+        button.link {
+            background: #1f2937;
+            color: #fff;
+        }
+        button:active {
+            transform: translateY(1px);
         }
         .error {
-            border: 2px solid red;
+            border: 2px solid #d90429;
+        }
+        .status {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .status.success {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+        .status.error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
         }
     </style>
     <script>
+        // We stash every submission under a single key here so both pages read the same data source.
+        const STORAGE_KEY = 'clubSignups';
 
-        function confirmAction(event, message) {
-            if (!confirm(message)) {
-                event.preventDefault();
-            }
-        }
         function validateField(event) {
             if (!event.target.value.trim()) {
                 event.target.classList.add('error');
@@ -45,10 +145,87 @@
                 event.target.classList.remove('error');
             }
         }
+
+        function loadSignups() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (error) {
+                console.error('Unable to read sign-up data', error);
+                return [];
+            }
+        }
+
+        function saveSignups(list) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        }
+
+        function formatGrade(level) {
+            return level ? `Grade ${level}` : '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('clubSignupForm');
+            const statusMessage = document.getElementById('statusMessage');
+            const viewBtn = document.getElementById('viewSignupsBtn');
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                if (!confirm('Submit this club sign-up?')) {
+                    return;
+                }
+
+                // It grabs every field all at once so that it can save one clean object.
+                const formData = new FormData(form);
+                const record = {
+                    id: formData.get('studentID').trim(),
+                    fullName: formData.get('fullName').trim(),
+                    birthday: formData.get('birthday'),
+                    email: formData.get('email').trim(),
+                    mobile: formData.get('mobilePhone').trim(),
+                    gradeLevel: formData.get('gradeLevel'),
+                    gradeLabel: formatGrade(formData.get('gradeLevel')),
+                    role: formData.get('role') === 'extern' ? 'Extern' : 'Intern',
+                    preferredClub: formData.get('preferredClub'),
+                    reason: formData.get('reason').trim(),
+                    createdAt: new Date().toISOString()
+                };
+
+                if (Object.values(record).some((value) => value === '' || value === null)) {
+                    statusMessage.textContent = 'Please fill out every field before submitting.';
+                    statusMessage.className = 'status error';
+                    return;
+                }
+
+                // It appends instead of overwriting it so all the previous submissions remain available.
+                const existing = loadSignups();
+                existing.push(record);
+                saveSignups(existing);
+
+                statusMessage.textContent = `Sign-up saved! Total records stored: ${existing.length}`;
+                statusMessage.className = 'status success';
+                form.reset();
+            });
+
+            form.addEventListener('reset', (event) => {
+                if (!confirm('Clear all entered information?')) {
+                    event.preventDefault();
+                    return;
+                }
+                statusMessage.textContent = '';
+                statusMessage.className = 'status';
+            });
+
+            viewBtn.addEventListener('click', () => {
+                window.location.href = 'Q3_2GRubidiumVillena.html';
+            });
+        });
     </script>
 </head>
 <body>
-    <form method="post" action="submit" onsubmit="confirmAction(event, 'Are you sure you want to submit?')" onreset="confirmAction(event, 'Are you sure you want to reset?')">
+    <form id="clubSignupForm">
+        <h1>Club / Organization Application</h1>
         <fieldset>
             <legend>Personal Information</legend>
             <label>
@@ -84,20 +261,22 @@
                     <option value="12">Grade 12</option>
                 </select>
             </label>
-            <label>
-                Intern/Extern:
-                <input type="radio" name="role" value="intern" required> Intern
-                <input type="radio" name="role" value="extern" required> Extern
-            </label>
+            <div class="form-control">
+                <span>Intern/Extern:</span>
+                <div class="radio-group">
+                    <label><input type="radio" name="role" value="intern" required> Intern</label>
+                    <label><input type="radio" name="role" value="extern" required> Extern</label>
+                </div>
+            </div>
             <label>
                 Preferred Organization/Club:
                 <select name="preferredClub" required>
                     <option value="">Select Club</option>
-                    <option value="science">Science Club</option>
-                    <option value="math">Math Club</option>
-                    <option value="arts">Arts Club</option>
-                    <option value="sports">Sports Club</option>
-                    <option value="music">Music Club</option>
+                    <option value="Science Club">Science Club</option>
+                    <option value="Math Club">Math Club</option>
+                    <option value="Arts Club">Arts Club</option>
+                    <option value="Sports Club">Sports Club</option>
+                    <option value="Music Club">Music Club</option>
                 </select>
             </label>
             <label>
@@ -105,8 +284,12 @@
                 <textarea name="reason" required onblur="validateField(event)"></textarea>
             </label>
         </fieldset>
-        <button type="submit">Submit</button>
-        <button type="reset">Reset</button>
+        <div class="button-row">
+            <button type="submit" class="primary">Submit</button>
+            <button type="reset" class="secondary">Reset</button>
+            <button type="button" id="viewSignupsBtn" class="link">View Sign-ups</button>
+        </div>
+        <p id="statusMessage" class="status" aria-live="polite"></p>
     </form>
 </body>
 </html>
