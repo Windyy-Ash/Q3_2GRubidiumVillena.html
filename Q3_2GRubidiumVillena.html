@@ -5,11 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Club Sign-ups</title>
     <style>
+        :root {
+            --lavender-50: #fdfbff;
+            --lavender-100: #f7f0ff;
+            --lavender-200: #ede4ff;
+            --lavender-300: #dac4ff;
+            --lavender-500: #a475f9;
+            --lavender-700: #5c3c9b;
+            --ink: #2a1c42;
+        }
         body {
             margin: 0;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fb;
-            color: #101629;
+            color: var(--ink);
+            min-height: 100vh;
+            background: linear-gradient(140deg, var(--lavender-50), var(--lavender-200));
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 15% 20%, rgba(164, 117, 249, 0.35), transparent 55%),
+                radial-gradient(circle at 85% 15%, rgba(92, 60, 155, 0.25), transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(218, 196, 255, 0.5), transparent 60%);
+            z-index: -1;
         }
         .shell {
             max-width: 1100px;
@@ -18,29 +39,47 @@
         }
         .panel {
             background: #fff;
+            border-radius: 22px;
+            padding: 36px;
+            box-shadow: 0 25px 60px rgba(42, 28, 66, 0.15);
+            border: 1px solid var(--lavender-200);
+            position: relative;
+        }
+        .panel::after {
+            content: "";
+            position: absolute;
+            inset: 12px;
             border-radius: 18px;
-            padding: 32px;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
-            border: 1px solid #e3e8ff;
+            border: 1px solid rgba(164, 117, 249, 0.12);
+            pointer-events: none;
         }
         h1 {
             margin-top: 0;
-            font-size: 2.2rem;
+            font-size: 2.3rem;
+            color: var(--lavender-700);
         }
         .subtitle {
             margin: 4px 0 24px;
-            color: #4b5563;
-            font-weight: 500;
+            color: #6b5c84;
+            font-weight: 600;
+            letter-spacing: 0.04em;
         }
         .nav-link {
-            display: inline-block;
-            margin-bottom: 16px;
-            color: #4338ca;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            color: var(--lavender-700);
             text-decoration: none;
             font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(164, 117, 249, 0.12);
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
         }
         .nav-link:hover {
-            text-decoration: underline;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(92, 60, 155, 0.18);
         }
         .controls {
             display: flex;
@@ -51,35 +90,44 @@
         }
         label {
             font-weight: 600;
+            color: #5a4a75;
         }
         select {
             min-width: 240px;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid #c7d2fe;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--lavender-300);
             font-size: 1rem;
+            background: var(--lavender-50);
+            color: var(--ink);
+            box-shadow: 0 10px 25px rgba(164, 117, 249, 0.15);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         select:focus {
             outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.2);
+            border-color: var(--lavender-500);
+            box-shadow: 0 0 0 4px rgba(164, 117, 249, 0.25);
         }
         .summary {
             font-size: 1.1rem;
             font-weight: 600;
-            margin: 8px 0 16px;
+            margin: 14px 0 18px;
+            color: var(--lavender-700);
         }
         .status-note {
-            margin: 0 0 16px;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            background: #f9fafb;
+            margin: 0 0 18px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(92, 60, 155, 0.2);
+            background: rgba(253, 251, 255, 0.9);
+            color: #4c3b6c;
         }
         .table-wrapper {
             overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid #d8ddf3;
+            border-radius: 18px;
+            border: 1px solid var(--lavender-200);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), #fff);
+            box-shadow: 0 20px 40px rgba(42, 28, 66, 0.12);
         }
         table {
             border-collapse: collapse;
@@ -87,24 +135,27 @@
             min-width: 720px;
         }
         thead {
-            background: #0f172a;
+            background: linear-gradient(90deg, var(--lavender-500), var(--lavender-700));
             color: #fff;
         }
         th,
         td {
-            padding: 12px;
+            padding: 14px 16px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid rgba(218, 196, 255, 0.6);
         }
         tbody tr:nth-child(odd) {
-            background: #f8fafc;
+            background: rgba(253, 251, 255, 0.8);
+        }
+        tbody tr:nth-child(even) {
+            background: rgba(237, 228, 255, 0.5);
         }
         .hidden {
             display: none;
         }
         @media (max-width: 768px) {
             .panel {
-                padding: 24px;
+                padding: 28px;
             }
             select {
                 width: 100%;
@@ -119,7 +170,7 @@
 <div class="shell">
     <section class="panel">
             <h1>Show List of Students Who Signed-Up</h1>
-            <p class="subtitle">by AL Mendoza</p>
+            <p class="subtitle">by Ashley Villena!!</p>
             <a class="nav-link" href="index.html">&#8592; Back to Sign-up</a>
 
             <div class="controls">
